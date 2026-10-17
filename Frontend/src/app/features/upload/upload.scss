@@ -1,0 +1,64 @@
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 2rem 1rem;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 1rem;
+
+  strong { color: var(--text); }
+
+  &:hover,
+  &--active {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.row--issue {
+  background: #fffaf0;
+}
+
+.badge + .badge {
+  margin-left: 0.25rem;
+}
+
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+.stat__value--sm { font-size: 1rem; padding-top: 0.35rem; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}

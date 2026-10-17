@@ -1,0 +1,84 @@
+<div class="backdrop" (click)="close()"></div>
+
+<form
+  class="dialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="edit-title"
+  [formGroup]="form"
+  (ngSubmit)="save()"
+  novalidate
+>
+  <header class="dialog__header">
+    <div>
+      <h2 id="edit-title">Corregir registro</h2>
+      <p class="muted">
+        Comercio <strong>{{ record().pcCodComRed }}</strong> · fecha {{ record().pcProcessDate | date: 'dd/MM/yyyy' }}
+      </p>
+    </div>
+    <button type="button" class="dialog__close" aria-label="Cerrar" (click)="close()">×</button>
+  </header>
+
+  <div class="dialog__body">
+    <div class="current">
+      <span class="muted">Motivo actual:</span>
+      <span>{{ record().motivo }}</span>
+    </div>
+
+    @if (error(); as message) {
+      <div class="alert alert--danger" role="alert">{{ message }}</div>
+    }
+
+    <div class="grid">
+      <div class="field field--wide">
+        <label for="pcNomComRed">Nombre del comercio (pc_nomcomred)</label>
+        <input id="pcNomComRed" class="input" formControlName="pcNomComRed" maxlength="150" />
+      </div>
+      <div class="field">
+        <label for="pcTipDoc">Tipo doc. (pc_tipdoc)</label>
+        <input id="pcTipDoc" class="input" formControlName="pcTipDoc" maxlength="10" />
+      </div>
+      <div class="field">
+        <label for="pcNumDoc">Nº documento (pc_numdoc)</label>
+        <input id="pcNumDoc" class="input" formControlName="pcNumDoc" maxlength="20" inputmode="numeric" />
+      </div>
+      <div class="field field--wide">
+        <label for="pcDireccion">Dirección</label>
+        <input id="pcDireccion" class="input" formControlName="pcDireccion" maxlength="250" />
+      </div>
+      <div class="field">
+        <label for="pcCiudad">Ciudad</label>
+        <input id="pcCiudad" class="input" formControlName="pcCiudad" maxlength="100" />
+      </div>
+      <div class="field">
+        <label for="pcTelefono">Teléfono</label>
+        <input id="pcTelefono" class="input" formControlName="pcTelefono" maxlength="20" />
+      </div>
+      <div class="field field--wide">
+        <label for="pcEmail">Email</label>
+        <input id="pcEmail" class="input" type="email" formControlName="pcEmail" maxlength="150" />
+      </div>
+    </div>
+
+    @if (issues().length === 0) {
+      <div class="alert alert--success">Los datos son válidos: al guardar, el registro saldrá de cuarentena y volverá a commerce.</div>
+    } @else {
+      <div class="alert alert--info">
+        Al guardar, el registro seguirá en cuarentena:
+        <ul>
+          @for (issue of issues(); track $index) {
+            <li>{{ issue }}</li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+  <footer class="dialog__footer">
+    <button type="button" class="btn btn--ghost" (click)="close()" [disabled]="saving()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="saving() || form.invalid">
+      @if (saving()) { <span class="spinner"></span> }
+      Guardar y revalidar
+    </button>
+  </footer>
+</form>

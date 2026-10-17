@@ -1,0 +1,79 @@
+<div class="page-header">
+  <h1>Procesar información</h1>
+  <p>Valida los registros cargados de un día según <strong>pc_processdate</strong>. Los inválidos se mueven a cuarentena.</p>
+</div>
+
+<div class="layout">
+  <section class="card">
+    <div class="card__header">
+      <h2>Fechas cargadas</h2>
+      <button type="button" class="btn btn--ghost btn--sm" (click)="loadDates()" [disabled]="loadingDates()">Actualizar</button>
+    </div>
+
+    @if (loadingDates() && dates().length === 0) {
+      <p class="empty">Cargando…</p>
+    } @else {
+      <ul class="date-list">
+        @for (item of dates(); track item.pcProcessDate) {
+          <li>
+            <button
+              type="button"
+              class="date-item"
+              [class.date-item--active]="item.pcProcessDate === selectedDate()"
+              (click)="selectDate(item.pcProcessDate)"
+            >
+              <span>{{ item.pcProcessDate | date: 'EEEE, d MMM y' }}</span>
+              <span class="badge badge--success">{{ item.totalRecords }} registros</span>
+            </button>
+          </li>
+        } @empty {
+          <li class="empty">
+            No hay información cargada. <a routerLink="/upload">Carga un archivo</a>.
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section class="card">
+    <div class="card__header">
+      <h2>Ejecutar validación</h2>
+    </div>
+
+    <div class="field">
+      <label for="processDate">Fecha de proceso</label>
+      <input
+        id="processDate"
+        class="input"
+        type="date"
+        [ngModel]="selectedDate()"
+        (ngModelChange)="selectDate($event)"
+      />
+    </div>
+
+    <ul class="rules muted">
+      <li><strong>pc_nomcomred</strong> no debe estar vacío.</li>
+      <li><strong>pc_numdoc</strong> no debe estar vacío, ni contener letras ni caracteres especiales.</li>
+    </ul>
+
+    <button type="button" class="btn btn--primary btn--block" (click)="process()" [disabled]="!selectedDate() || processing()">
+      @if (processing()) { <span class="spinner"></span> }
+      Procesar
+    </button>
+
+    @if (error(); as message) {
+      <div class="alert alert--danger result" role="alert">{{ message }}</div>
+    }
+
+    @if (result(); as r) {
+      <div class="result-box" role="status">
+        <span class="muted">Registros enviados a cuarentena</span>
+        <strong class="result-box__value">{{ r.quarantinedCount }}</strong>
+        <span class="muted">Fecha {{ r.processDate | date: 'dd/MM/yyyy' }}</span>
+        @if (r.quarantinedCount > 0) {
+          <a class="btn btn--ghost btn--sm" routerLink="/quarantine" [queryParams]="{ date: r.processDate }">Ver registros con error →</a>
+        }
+      </div>
+    }
+  </section>
+</div>

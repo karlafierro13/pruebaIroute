@@ -1,0 +1,127 @@
+<div class="page-header">
+  <h1>Cargar archivo</h1>
+  <p>Selecciona el archivo <strong>commerce_DDMMYYYY.csv</strong>, revisa la previsualización y envíalo al servidor.</p>
+</div>
+
+<section class="card">
+  <label
+    class="dropzone"
+    [class.dropzone--active]="dragging()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="dragging.set(false)"
+    (drop)="onDrop($event)"
+  >
+    <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)" hidden />
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    @if (file(); as f) {
+      <strong>{{ f.name }}</strong>
+      <span class="muted">{{ (f.size / 1024).toFixed(1) }} KB · haz clic para cambiar</span>
+    } @else {
+      <strong>Arrastra el archivo aquí o haz clic para seleccionarlo</strong>
+      <span class="muted">Formato: commerce_DDMMYYYY.csv · máx. 10 MB</span>
+    }
+  </label>
+
+  @if (errors().length > 0) {
+    <div class="alert alert--danger" role="alert">
+      <strong>No es posible enviar el archivo:</strong>
+      <ul>
+        @for (error of errors(); track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  @if (result(); as r) {
+    <div class="alert alert--success" role="status">
+      Archivo <strong>{{ r.fileName }}</strong> cargado: {{ r.insertedCount }} registros registrados en <code>commerce</code>.
+      <a routerLink="/process" [queryParams]="{ date: fileDate() }">Ir a procesar →</a>
+    </div>
+  }
+</section>
+
+@if (rows().length > 0) {
+  <section class="card">
+    <div class="card__header">
+      <h2>Previsualización</h2>
+      <div class="actions">
+        <button type="button" class="btn btn--ghost" (click)="reset()" [disabled]="uploading()">Limpiar</button>
+        <button type="button" class="btn btn--primary" (click)="upload()" [disabled]="!canUpload() || !!result()">
+          @if (uploading()) { <span class="spinner"></span> }
+          Enviar al servidor
+        </button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__label">Registros</div>
+        <div class="stat__value">{{ rows().length }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Sin observaciones</div>
+        <div class="stat__value text-success">{{ rows().length - issuesCount() }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Irían a cuarentena</div>
+        <div class="stat__value text-danger">{{ issuesCount() }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Fecha(s) de proceso</div>
+        <div class="stat__value stat__value--sm">{{ processDates().join(', ') }}</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <label class="checkbox">
+        <input type="checkbox" [checked]="onlyIssues()" (change)="toggleOnlyIssues()" />
+        Mostrar solo registros con observaciones
+      </label>
+      <span class="muted">Las observaciones son referenciales; la validación oficial la realiza el proceso.</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Observaciones</th>
+            @for (column of columns; track column) {
+              <th>{{ column }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of pagedRows(); track row.line) {
+            <tr [class.row--issue]="row.issues.length > 0">
+              <td class="muted">{{ row.line }}</td>
+              <td class="wrap">
+                @for (issue of row.issues; track $index) {
+                  <span class="badge badge--warning">{{ issue }}</span>
+                } @empty {
+                  <span class="badge badge--success">OK</span>
+                }
+              </td>
+              @for (column of columns; track column) {
+                <td>{{ row.data[column] }}</td>
+              }
+            </tr>
+          } @empty {
+            <tr><td [attr.colspan]="columns.length + 2" class="empty">Sin registros para mostrar.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button type="button" class="btn btn--ghost btn--sm" (click)="changePage(-1)" [disabled]="page() === 1">Anterior</button>
+        <span class="muted">Página {{ page() }} de {{ totalPages() }}</span>
+        <button type="button" class="btn btn--ghost btn--sm" (click)="changePage(1)" [disabled]="page() === totalPages()">Siguiente</button>
+      </div>
+    }
+  </section>
+}

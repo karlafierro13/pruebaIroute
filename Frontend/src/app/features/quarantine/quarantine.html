@@ -1,0 +1,102 @@
+<div class="page-header">
+  <h1>Registros en cuarentena</h1>
+  <p>Comercios que no superaron la validación y el motivo del rechazo. Corrígelos para devolverlos a commerce o descártalos.</p>
+</div>
+
+<section class="card">
+  <div class="filters">
+    <div class="field">
+      <label for="dateFilter">Fecha de proceso</label>
+      <input id="dateFilter" class="input" type="date" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event)" />
+    </div>
+    <div class="field field--grow">
+      <label for="search">Buscar</label>
+      <input
+        id="search"
+        class="input"
+        type="search"
+        placeholder="Código, nombre, documento o motivo"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+    </div>
+    <button type="button" class="btn btn--ghost" (click)="clearFilters()">Limpiar filtros</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat__label">Total en cuarentena</div>
+      <div class="stat__value">{{ summary().total }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat__label">Nombre vacío</div>
+      <div class="stat__value">{{ summary().emptyName }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat__label">Documento vacío</div>
+      <div class="stat__value">{{ summary().emptyDoc }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat__label">Documento inválido</div>
+      <div class="stat__value">{{ summary().invalidDoc }}</div>
+    </div>
+  </div>
+
+  <div class="table-wrapper" [class.is-loading]="loading()">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha proceso</th>
+          <th>Código</th>
+          <th>Nombre comercio</th>
+          <th>Tipo doc.</th>
+          <th>Nº documento</th>
+          <th>Ciudad</th>
+          <th>Motivo</th>
+          <th>En cuarentena desde</th>
+          <th class="actions-col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr>
+            <td>{{ row.pcProcessDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ row.pcCodComRed }}</td>
+            <td>{{ row.pcNomComRed ?? '—' }}</td>
+            <td>{{ row.pcTipDoc }}</td>
+            <td><code>{{ row.pcNumDoc ?? '—' }}</code></td>
+            <td>{{ row.pcCiudad }}</td>
+            <td class="wrap">
+              @for (motivo of row.motivos; track $index) {
+                <span class="badge badge--danger">{{ motivo }}</span>
+              }
+            </td>
+            <td class="muted">{{ row.quarantinedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="actions-col">
+              @if (confirmingDeleteId() === row.id) {
+                <span class="confirm">
+                  ¿Descartar?
+                  <button type="button" class="btn btn--danger btn--sm" (click)="discard(row)">Sí</button>
+                  <button type="button" class="btn btn--ghost btn--sm" (click)="confirmingDeleteId.set(null)">No</button>
+                </span>
+              } @else {
+                <button type="button" class="btn btn--primary btn--sm" (click)="editing.set(row)">Corregir</button>
+                <button type="button" class="btn btn--ghost btn--sm" (click)="confirmingDeleteId.set(row.id)">Descartar</button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="9" class="empty">
+              {{ loading() ? 'Cargando…' : 'No hay registros en cuarentena para los filtros seleccionados.' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+@if (editing(); as record) {
+  <app-quarantine-edit-dialog [record]="record" (saved)="onSaved($event)" (closed)="editing.set(null)" />
+}

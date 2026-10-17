@@ -1,0 +1,26 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__logo">i</span>
+      <span>iRoute <strong>Commerce</strong></span>
+    </a>
+
+    <nav class="nav" aria-label="Navegación principal">
+      @for (item of navItems; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="nav__link--active" class="nav__link">
+          <span class="nav__step">{{ item.step }}</span>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="user">
+      <span class="user__name">{{ auth.username() }}</span>
+      <button type="button" class="btn btn--ghost btn--sm" (click)="auth.logout()">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

@@ -1,0 +1,11 @@
+pc_processdate,pc_codcomred,pc_nomcomred,pc_tipdoc,pc_numdoc,pc_direccion,pc_ciudad,pc_telefono,pc_email
+2026-10-19,C0001,Supermercado La Favorita,RUC,1790016919001,Av. General Enríquez,Quito,022996500,contacto@favorita.ec
+2026-10-19,C0002,Farmacias Cruz Azul,RUC,0992223334001,Av. 9 de Octubre 100,Guayaquil,042345678,info@cruzazul.ec
+2026-10-19,C0003,,CED,1712345678,Calle Sucre 12,Cuenca,072845123,sin.nombre@mail.com
+2026-10-19,C0004,Ferretería El Tornillo,CED,17A2345678,Av. Amazonas N34,Quito,022456789,ventas@eltornillo.ec
+2026-10-19,C0005,Panadería San José,CED,1712-345678,Calle Bolívar 45,Ambato,032421234,pan@sanjose.ec
+2026-10-19,C0006,Librería Cervantes,RUC,,Av. Colón 230,Quito,022567890,libros@cervantes.ec
+2026-10-19,C0007,,RUC,09ABC#123,Malecón 2000,Guayaquil,042111222,error@mail.com
+2026-10-19,C0008,"Restaurante El Sabor, Cía. Ltda.",RUC,1791234567001,"Av. Shyris y Portugal, Local 3",Quito,022333444,reservas@elsabor.ec
+2026-10-19,C0009,Óptica Visión,CED,0102030405,Calle Larga 8,Cuenca,072222333,vision@optica.ec
+2026-10-19,C0010,Tienda Don Pepe,CED,1709 876543,Av. Maldonado S20,Quito,022777888,donpepe@mail.com
